@@ -1,0 +1,805 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# STOR 120 - Homework 1: Causality and Expressions\n",
+    "\n",
+    "Please complete this notebook by filling in the cells provided."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Recommended Reading:**\n",
+    "- [What is Data Science](http://www.inferentialthinking.com/chapters/01/what-is-data-science.html)\n",
+    "- [Causality and Experiments](http://www.inferentialthinking.com/chapters/02/causality-and-experiments.html) \n",
+    "- [Programming in Python](http://www.inferentialthinking.com/chapters/03/programming-in-python.html)\n",
+    "\n",
+    "For all problems that you must write explanations and sentences for, you **must** provide your answer in the designated space. Moreover, throughout this homework and all future ones, please be sure to not re-assign variables throughout the notebook! For example, if you use `max_temperature` in your answer to one question, do not reassign it later on. \n",
+    "\n",
+    "**Deadline:**\n",
+    "\n",
+    "This assignment is due Friday, January 21 at 5:00 PM. Late work will penalized as stated in the syllabus.\n",
+    "\n",
+    "Directly sharing answers is not okay, but discussing problems with the course staff or with other students is encouraged.\n",
+    "\n",
+    "You should start early so that you have time to get help if you're stuck. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 1. Scary Arithmetic\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "An ad for ADT Security Systems says,\n",
+    "\n",
+    "> \"When you go on vacation, burglars go to work [...] According to FBI statistics, over 25% of home burglaries occur between Memorial Day and Labor Day.\"\n",
+    "\n",
+    "**Question 1.1.** Do the data in the ad support the claim that burglars are more likely to go to work during the time between Memorial Day and Labor Day? Please explain your answer.\n",
+    "\n",
+    "**Note:** You can assume that \"over 25%\" means only slightly over. Had it been much over, say closer to 30%, then the marketers would have said so.\n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q1\n",
+    "manual: True\n",
+    "-->\n",
+    "<!-- EXPORT TO PDF -->"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "export_pdf": true
+   },
+   "source": [
+    "No, this does not support the claim that burglars are more likely to go to work during the time between Memorial Day and Labor Day because the number of days between memorial day and labor day makes up about 33% of the year which is more than 25%. We would only be able to conclude that burglars are more likely to got to work during this time if it was above 33% as that means they are robbing more than the number of days during that time. The 25% of home burglaries occuring is not significant enough to support the claim."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 2. Characters in Oliver Twist\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "In lecture, we counted the number of times that the literary characters were named in each chapter of the classic book, Little Women. In computer science, the word \"character\" also refers to a letter, digit, space, or punctuation mark; any single element of a text. The following code generates a scatter plot in which each dot corresponds to a chapter of *Oliver Twist*. The horizontal position of a dot measures the number of periods in the chapter. The vertical position measures the total number of characters."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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pUvRo0cPfPLJJ9i4cSOampoAND8r/+1vf4v8/HxotVosWLBAek9ISAjmzZsHAHjyySdtqpd9//33WLx4Mfz9/Vsda9u2bVi9enWroiZXr16Vfpzceeed3XZuRN2FiZqIAADDhg3D9u3boVKpsHz5coSFheGOO+7AiBEj0LdvXxgMBixZsqRbq3cNGzYMf/zjH6FQKJCeng6DwYC7774bUVFReO2116BSqbBt2zbo9Xqb973wwgtISEjA+fPnMWTIEPz85z9HfHw8hg0bhsjISDz00EOtjlVaWornnnsO/fv3R58+fXD33XcjPj4eBoMBe/bsQe/evbF69epuOzei7sJETUSSadOm4dSpU/jtb3+Lfv364ezZszh16hQCAwMxbdo0vPPOO9Lz3O6yYMEC7N+/Hw888ACampqQl5eHwMBA/OpXv8K3336LlJSUVu8JDg5GTk4Oli1bhr59++Ls2bOorKzE7373O+zbt6/NQisPPfQQ1q1bh/Hjx8PPzw8nTpxAcXEx4uLi8MILLyA/Px99+/bt1nMj6g4K0V1DOImIiKjbsUdNREQkY0zUREREMsZETUREJGNM1ERERDLGRE1ERCRjTNREREQyxkRNREQkY0zUREREMsZETUREJGNM1ERERDLGRE1ERCRjTNREREQyxkRNREQkY0zUREREMvb/AUVUMiS92F5CAAAAAElFTkSuQmCC",
+      "text/plain": [
+       "<Figure size 500x500 with 1 Axes>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "# This cell contains code that hasn't yet been covered in the course,\n",
+    "# but you should be able to interpret the scatter plot it generates.\n",
+    "\n",
+    "from datascience import *\n",
+    "from urllib.request import urlopen\n",
+    "import numpy as np\n",
+    "%matplotlib inline\n",
+    "\n",
+    "import ssl\n",
+    "ssl._create_default_https_context = ssl._create_unverified_context\n",
+    "\n",
+    "oliver_twist_url = 'https://www.gutenberg.org/files/730/730-0.txt'\n",
+    "chapters = urlopen(oliver_twist_url).read().decode().split('CHAPTER ')[1:]\n",
+    "text = Table().with_column('Chapters', chapters)\n",
+    "Table().with_columns(\n",
+    "    'Periods',    np.char.count(chapters, '.'),\n",
+    "    'Characters', text.apply(len, 0)\n",
+    "    ).scatter(0)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 2.1.** Around how many periods are there in the chapter with the most characters? Assign either 1, 2, 3, 4, or 5 to the name `characters_q1` below.\n",
+    "\n",
+    "1. 150\n",
+    "2. 250\n",
+    "3. 270\n",
+    "4. 27,000\n",
+    "5. 30,000\n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q2_1\n",
+    "manual: false\n",
+    "-->"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "characters_q1 = 2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 2.2.** Which of the following chapters has the most characters per period? Assign either 1, 2, or 3 to the name `characters_q2` below.\n",
+    "1. The chapter with the third least characters\n",
+    "2. The chapter with the fourth most characters\n",
+    "3. The chapter with the second most characters\n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q2_2\n",
+    "manual: false\n",
+    "-->"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "characters_q2 = 2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "To discover more interesting facts from this plot, read [Section 1.3.2](https://inferentialthinking.com/chapters/01/3/2/Another_Kind_Of_Character.html) of the textbook."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 3. Names and Assignment Statements\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 3.1.** When you run the following cell, Python produces a cryptic error message."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [
+    {
+     "ename": "SyntaxError",
+     "evalue": "cannot assign to literal here. Maybe you meant '==' instead of '='? (3236836149.py, line 1)",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;36m  Cell \u001b[0;32mIn[3], line 1\u001b[0;36m\u001b[0m\n\u001b[0;31m    4 = 2 + 2\u001b[0m\n\u001b[0m    ^\u001b[0m\n\u001b[0;31mSyntaxError\u001b[0m\u001b[0;31m:\u001b[0m cannot assign to literal here. Maybe you meant '==' instead of '='?\n"
+     ]
+    }
+   ],
+   "source": [
+    "4 = 2 + 2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "editable": false
+   },
+   "source": [
+    "Choose the best explanation of what's wrong with the code, and then assign 1, 2, 3, or 4 to `names_q1` below to indicate your answer.\n",
+    "\n",
+    "1. Python is smart and already knows `4 = 2 + 2`.\n",
+    "\n",
+    "2. `4` is already a defined number, and it doesn't make sense to make a number be a name for something else. In Python, \"`x = 2 + 2`\" means \"assign `x` as the name for the value of `2 + 2`.\"\n",
+    "\n",
+    "3. It should be `2 + 2 = 4`.\n",
+    "\n",
+    "4. I don't get an error message. This is a trick question.\n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q3_1\n",
+    "manual: False\n",
+    "-->"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "names_q1 = 2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 3.2.** When you run the following cell, Python will produce another cryptic error message."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [
+    {
+     "ename": "SyntaxError",
+     "evalue": "invalid syntax (3853341378.py, line 2)",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;36m  Cell \u001b[0;32mIn[5], line 2\u001b[0;36m\u001b[0m\n\u001b[0;31m    six = two plus two\u001b[0m\n\u001b[0m              ^\u001b[0m\n\u001b[0;31mSyntaxError\u001b[0m\u001b[0;31m:\u001b[0m invalid syntax\n"
+     ]
+    }
+   ],
+   "source": [
+    "two = 3\n",
+    "six = two plus two"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "editable": false
+   },
+   "source": [
+    "Choose the best explanation of what's wrong with the code and assign 1, 2, 3, or 4 to `names_q2` below to indicate your answer.\n",
+    "\n",
+    "1. The `plus` operation only applies to numbers, not the word \"two\".\n",
+    "\n",
+    "2. The name \"two\" cannot be assigned to the number 3.\n",
+    "\n",
+    "3. Two plus two is four, not six.\n",
+    "\n",
+    "4. Python cannot interpret the name `two` followed directly by a name that has not been defined.\n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q3_2\n",
+    "manual: False\n",
+    "-->"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "names_q2 = 1"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 3.3.** When you run the following cell, Python will, yet again, produce another cryptic error message."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "5\n"
+     ]
+    },
+    {
+     "ename": "TypeError",
+     "evalue": "unsupported operand type(s) for +: 'NoneType' and 'int'",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[0;31mTypeError\u001b[0m                                 Traceback (most recent call last)",
+      "Cell \u001b[0;32mIn[6], line 2\u001b[0m\n\u001b[1;32m      1\u001b[0m x \u001b[38;5;241m=\u001b[39m \u001b[38;5;28mprint\u001b[39m(\u001b[38;5;241m5\u001b[39m)\n\u001b[0;32m----> 2\u001b[0m y \u001b[38;5;241m=\u001b[39m x \u001b[38;5;241m+\u001b[39m \u001b[38;5;241m2\u001b[39m\n",
+      "\u001b[0;31mTypeError\u001b[0m: unsupported operand type(s) for +: 'NoneType' and 'int'"
+     ]
+    }
+   ],
+   "source": [
+    "x = print(5)\n",
+    "y = x + 2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "editable": false
+   },
+   "source": [
+    "Choose the best explanation of what's wrong with the code and assign 1, 2, or 3 to `names_q3` below to indicate your answer.\n",
+    "\n",
+    "1. Python doesn't want `y` to be assigned.\n",
+    "\n",
+    "2. The `print` operation is meant for displaying values to the programmer, not for assigning values!\n",
+    "\n",
+    "3. Python can’t do addition between one name and one number. It has to be 2 numbers or 2 predefined names.\n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q3_3\n",
+    "manual: false\n",
+    "-->"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "names_q3 = 3"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 4. Job Opportunities & Education in Rural India\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "A [study](http://www.nber.org/papers/w16021.pdf) at UCLA investigated factors that might result in greater attention to the health and education of girls in rural India. One such factor is information about job opportunities for women. The idea is that if people know that educated women can get good jobs, they might take more care of the health and education of girls in their families, as an investment in the girls’ future potential as earners. Without the knowledge of job opportunities, the author hypothesizes that families do not invest in women’s well-being.\n",
+    "\n",
+    "The study focused on 160 villages outside the capital of India, all with little access to information about call centers and similar organizations that offer job opportunities to women. In 80 of the villages chosen at random, recruiters visited the village, described the opportunities, recruited women who had some English language proficiency and experience with computers, and provided ongoing support free of charge for three years. In the other 80 villages, no recruiters visited and no other intervention was made.\n",
+    "\n",
+    "At the end of the study period, the researchers recorded data about the school attendance and health of the children in the villages."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 4.1.** Which statement best describes the *treatment* and *control* groups for this study? Assign either 1, 2, or 3 to the name `jobs_q1` below.\n",
+    "\n",
+    "1. The treatment group was the 80 villages visited by recruiters, and the control group was the other 80 villages with no intervention.\n",
+    "\n",
+    "2. The treatment group was the 160 villages selected, and the control group was the rest of the villages outside the capital of India.\n",
+    "\n",
+    "3. There is no clear notion of *treatment* and *control* group in this study.\n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q4_1\n",
+    "manual: false\n",
+    "-->"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "jobs_q1 = 1"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 4.2.** Was this an observational study or a randomized controlled experiment? Assign either 1, 2, or 3 to the name `jobs_q2` below.\n",
+    "\n",
+    "1. This was an observational study.\n",
+    "\n",
+    "2. This was a randomized controlled experiment.  \n",
+    "\n",
+    "3. This was a randomized observational study.\n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q4_2\n",
+    "manual: false\n",
+    "-->"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "jobs_q2 = 2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 4.3.** The study reported, “Girls aged 5-15 in villages that received the recruiting services were 3 to 5 percentage points more likely to be in school and experienced an increase in Body Mass Index, reflecting greater nutrition and/or medical care. However, there was no net gain in height. For boys, there was no change in any of these measures.” Why do you think the author points out the lack of change in the boys?\n",
+    "\n",
+    "*Hint:* Remember the original hypothesis. The author believes that educating women in job opportunities will cause families to invest more in the women’s well-being.\n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q4_3\n",
+    "manual: true\n",
+    "-->\n",
+    "<!-- EXPORT TO PDF -->"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "export_pdf": true
+   },
+   "source": [
+    "The lack of change in boys is due to the fact that the epxeriment focused on girl's who were already underpriveleged and their goal was to educate them so they would see more of a change than the boys would as nothing is changing for them."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 5. Differences between Majors\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The University of North Carolina System's [interactive dashboard](https://www.northcarolina.edu/impact/stats-data-reports/interactive-data-dashboards/) provides data on numerous aspects of all system campuses. Adapted from data from this dashboard, the table below displays the numbers of degree recipients from the University of North Carolina at Chapel Hill in three majors in the academic years 2009-2010 and 2019-2020.\n",
+    "\n",
+    "| Major                              | 2009-2010    | 2019-2020   |\n",
+    "|------------------------------------|--------------|-------------|\n",
+    "| History                            |     174      |    82       |\n",
+    "| Philosophy                         |      28      |    44       |\n",
+    "| Computer Science                   |      26      |   303       |\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 5.1.** Suppose you want to find the **biggest** absolute difference between the numbers of degree recipients in the two years, among the three majors.\n",
+    "\n",
+    "In the cell below, compute this value and call it `biggest_change`. Use a single expression (a single line of code) to compute the answer. Let Python perform all the arithmetic (like subtracting 49 from 67) rather than simplifying the expression yourself. The built-in `abs` function takes a numerical input and returns the absolute value. The built-in `max` function can take in 3 arguments and returns the maximum of the three numbers\n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q5_1\n",
+    "manual: True\n",
+    "-->\n",
+    "<!-- EXPORT TO PDF -->"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {
+    "export_pdf": true,
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "277"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "biggest_change = max (abs (82 - 174) ,abs (44 - 28) ,abs (303 - 26))\n",
+    "biggest_change"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 5.2.** Which of the three majors had the **smallest** absolute difference? Assign `smallest_change_major` to 1, 2, or 3 where each number corresponds to the following major:\n",
+    "\n",
+    "1: History  \n",
+    "2: Philosophy  \n",
+    "3: Computer Science\n",
+    "\n",
+    "Choose the number that corresponds to the major with the smallest absolute difference.\n",
+    "\n",
+    "You should be able to answer by rough mental arithmetic, without having to calculate the exact value for each major. \n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q5_2\n",
+    "manual: False\n",
+    "-->"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "smallest_change_major = 2\n",
+    "smallest_change_major"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 5.3.**  For each major, define the “relative change” to be the following: $\\large{\\frac{\\text{absolute difference}}{\\text{value in 2009-2010}} * 100}$ \n",
+    "\n",
+    "Fill in the code below such that `history_relative_change`, `philosophy_relative_change` and `cs_relative_change` are assigned to the relative changes for their respective majors.\n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q5_3\n",
+    "manual: False\n",
+    "-->"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {
+    "for_assignment_type": "student",
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(52.87356321839081, 57.14285714285714, 1065.3846153846152)"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "history_relative_change = (abs(82-174) / 174) * 100\n",
+    "philosophy_relative_change = (abs(44-28) / 28) * 100\n",
+    "cs_relative_change = (abs(303-26) / 26) * 100\n",
+    "history_relative_change, philosophy_relative_change, cs_relative_change"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 5.4.** Assign `biggest_rel_change_major` to 1, 2, or 3 where each number corresponds to to the following: \n",
+    "\n",
+    "1: History  \n",
+    "2: Philosophy  \n",
+    "3: Computer Science\n",
+    "\n",
+    "Choose the number that corresponds to the major with the biggest relative change.\n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q5_4\n",
+    "manual: False\n",
+    "-->"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "3"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Assign biggest_rel_change_major to the number corresponding to the major with the biggest relative change.\n",
+    "biggest_rel_change_major = 3\n",
+    "biggest_rel_change_major"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## 6. Nearsightedness Study\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Myopia, or nearsightedness, results from a number of genetic and environmental factors. In 1999, Quinn et al studied the relation between myopia and ambient lighting at night (for example, from nightlights or room lights) during childhood."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 6.1.** The data were gathered by the following procedure, reported in the study. “Between January and June 1998, parents of children aged 2-16 years [...] that were seen as outpatients in a university pediatric ophthalmology clinic completed a questionnaire on the child’s light exposure both at present and before the age of 2 years.” Was this study observational, or was it a controlled experiment? Explain. \n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q6_1\n",
+    "manual: True\n",
+    "-->\n",
+    "<!-- EXPORT TO PDF -->"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "export_pdf": true
+   },
+   "source": [
+    "This was a observational study since the subjects were only observed and not assigned treatments that were tested. In this study, the subject were only observed and the scientists had no hand in generating results so it was an observational study."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 6.2.** The study found that of the children who slept with a room light on before the age of 2, 55% were myopic. Of the children who slept with a night light on before the age of 2, 34% were myopic. Of the children who slept in the dark before the age of 2, 10% were myopic. The study concluded that, \"The prevalence of myopia [...] during childhood was strongly associated with ambient light exposure during sleep at night in the first two years after birth.\"\n",
+    "\n",
+    "Do the data support this statement? You may interpret “strongly” in any reasonable qualitative way.\n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q6_2\n",
+    "manual: True\n",
+    "-->\n",
+    "<!-- EXPORT TO PDF -->"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "export_pdf": true
+   },
+   "source": [
+    "The data does support this statement that there is a strong association between the prevalence of myopia and ambient light exposure during sleep at night in the first two years after birth. It is important to note that there is only an associated being presented not causation. The association could be even stronger if they had seen similar results in multiple studies but the word strong here could be interpreted different ways."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 6.3.** On May 13, 1999, CNN reported the results of this study under the headline, “Night light may lead to nearsightedness.” Does the conclusion of the study claim that night light causes nearsightedness?\n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q6_3\n",
+    "manual: True\n",
+    "-->\n",
+    "<!-- EXPORT TO PDF -->"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "export_pdf": true
+   },
+   "source": [
+    "No, the conclusion of the study does not claim that night light causes nearsightedness it is merely stating that there is an association so it is a possibility. Since this is an observational study they can not conclude that causation exists in the study."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Question 6.4.** The final paragraph of the CNN report said that “several eye specialists” had pointed out that the study should have accounted for heredity.\n",
+    "\n",
+    "Myopia is passed down from parents to children. Myopic parents are more likely to have myopic children, and may also be more likely to leave lights on habitually (since the parents have poor vision). In what way does the knowledge of this possible genetic link affect how we interpret the data from the study? \n",
+    "\n",
+    "<!--\n",
+    "BEGIN QUESTION\n",
+    "name: q6_4\n",
+    "manual: True\n",
+    "-->\n",
+    "<!-- EXPORT TO PDF -->"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "export_pdf": true
+   },
+   "source": [
+    "This possible genetic link introduces another variable which can explain the association of myopia and night lights. This would cause the data to be interpreted differently and take into account both the genetic and environmental factors that can explain the results of this study."
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
